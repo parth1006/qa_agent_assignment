@@ -26,7 +26,7 @@ An intelligent QA automation system that generates comprehensive test cases and 
 
 ```bash
 # Clone repository
-git clone https://github.com/your-username/qa-agent-assignment.git
+git clone [https://github.com/parth1006/qa-agent-assignment.git](https://github.com/parth1006/qa_agent_assignment.git)
 cd qa-agent-assignment
 
 # Create virtual environment
