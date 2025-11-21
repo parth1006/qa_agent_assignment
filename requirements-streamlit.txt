@@ -1,0 +1,6 @@
+# Streamlit Cloud Requirements
+# Frontend dependencies only
+
+streamlit==1.40.1
+requests==2.32.3
+python-dotenv==1.0.1

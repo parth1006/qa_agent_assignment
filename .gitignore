@@ -1,0 +1,161 @@
+# ============================================
+# QA AGENT ASSIGNMENT - GITIGNORE
+# ============================================
+
+# ===== ENVIRONMENT & SECRETS =====
+.env
+.env.local
+.env.*.local
+*.key
+secrets/
+credentials/
+
+# ===== PYTHON =====
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.pytest_cache/
+
+# ===== JUPYTER NOTEBOOKS =====
+.ipynb_checkpoints
+*.ipynb
+
+# ===== IDEs & EDITORS =====
+# VSCode
+.vscode/
+*.code-workspace
+
+# PyCharm
+.idea/
+*.iml
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# ===== STORAGE & DATA =====
+# FAISS index files
+storage/faiss_index/*
+!storage/faiss_index/.gitkeep
+
+# Uploaded files
+storage/uploaded_files/*
+!storage/uploaded_files/.gitkeep
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+temp/
+tmp/
+*.tmp
+
+# ===== MACOS =====
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+
+# ===== WINDOWS =====
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ===== LINUX =====
+*~
+.directory
+.Trash-*
+
+# ===== SELENIUM =====
+# WebDriver binaries (managed by webdriver-manager)
+drivers/
+*.exe
+geckodriver.log
+chromedriver.log
+
+# ===== FAISS SPECIFIC =====
+# Index files
+*.index
+*.faiss
+
+# ===== STREAMLIT =====
+.streamlit/secrets.toml
+
+# ===== BACKUP FILES =====
+*.bak
+*.backup
+*.old
+
+# ===== DOCUMENTATION (BUILD ARTIFACTS) =====
+docs/_build/
+site/
+
+# ===== MISC =====
+.envrc
+*.sqlite
+*.db
+node_modules/
+package-lock.json
+
+# ===== KEEP EMPTY DIRECTORIES =====
+!**/.gitkeep

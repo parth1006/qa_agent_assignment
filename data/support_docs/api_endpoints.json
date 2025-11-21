@@ -1,0 +1,432 @@
+{
+  "api_version": "1.0",
+  "base_url": "https://api.eshop-checkout.com/v1",
+  "description": "Mock API endpoints for E-Shop Checkout system. This document defines the expected API contract for future backend integration.",
+  "authentication": {
+    "type": "Bearer Token",
+    "header": "Authorization",
+    "format": "Bearer <token>"
+  },
+  "endpoints": [
+    {
+      "name": "Get Product Catalog",
+      "method": "GET",
+      "path": "/products",
+      "description": "Retrieve list of all available products",
+      "authentication_required": false,
+      "query_parameters": [],
+      "request_body": null,
+      "response": {
+        "status_code": 200,
+        "content_type": "application/json",
+        "schema": {
+          "type": "array",
+          "items": {
+            "product_id": "string",
+            "name": "string",
+            "price": "number",
+            "description": "string",
+            "available": "boolean"
+          }
+        },
+        "example": {
+          "products": [
+            {
+              "product_id": "prod-001",
+              "name": "Wireless Headphones",
+              "price": 79.99,
+              "description": "High-quality Bluetooth headphones",
+              "available": true
+            },
+            {
+              "product_id": "prod-002",
+              "name": "Smart Watch",
+              "price": 199.99,
+              "description": "Fitness tracking smartwatch",
+              "available": true
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Validate Discount Code",
+      "method": "POST",
+      "path": "/validate_coupon",
+      "description": "Validate a discount code and return discount details",
+      "authentication_required": false,
+      "query_parameters": [],
+      "request_body": {
+        "content_type": "application/json",
+        "required_fields": ["code"],
+        "schema": {
+          "code": "string"
+        },
+        "example": {
+          "code": "SAVE15"
+        }
+      },
+      "response": {
+        "success_response": {
+          "status_code": 200,
+          "schema": {
+            "valid": "boolean",
+            "discount_type": "string",
+            "discount_value": "number",
+            "message": "string"
+          },
+          "example": {
+            "valid": true,
+            "discount_type": "percentage",
+            "discount_value": 15,
+            "message": "Discount code applied! You saved 15%"
+          }
+        },
+        "error_response": {
+          "status_code": 400,
+          "schema": {
+            "valid": "boolean",
+            "message": "string"
+          },
+          "example": {
+            "valid": false,
+            "message": "Invalid discount code"
+          }
+        }
+      },
+      "validation_rules": {
+        "valid_codes": ["SAVE15"],
+        "SAVE15": {
+          "type": "percentage",
+          "value": 15,
+          "description": "15% off entire cart"
+        }
+      }
+    },
+    {
+      "name": "Calculate Shipping",
+      "method": "POST",
+      "path": "/calculate_shipping",
+      "description": "Calculate shipping cost based on method and cart details",
+      "authentication_required": false,
+      "query_parameters": [],
+      "request_body": {
+        "content_type": "application/json",
+        "required_fields": ["shipping_method", "subtotal"],
+        "schema": {
+          "shipping_method": "string (enum: standard, express)",
+          "subtotal": "number",
+          "destination_address": "string (optional)"
+        },
+        "example": {
+          "shipping_method": "express",
+          "subtotal": 309.97,
+          "destination_address": "123 Main St, City, State 12345"
+        }
+      },
+      "response": {
+        "status_code": 200,
+        "schema": {
+          "shipping_cost": "number",
+          "estimated_days": "string",
+          "method": "string"
+        },
+        "example": {
+          "shipping_cost": 10.00,
+          "estimated_days": "1-2 business days",
+          "method": "express"
+        }
+      },
+      "business_rules": {
+        "standard": {
+          "cost": 0.00,
+          "delivery_time": "5-7 business days"
+        },
+        "express": {
+          "cost": 10.00,
+          "delivery_time": "1-2 business days"
+        }
+      }
+    },
+    {
+      "name": "Submit Order",
+      "method": "POST",
+      "path": "/submit_order",
+      "description": "Submit complete order with user details and cart information",
+      "authentication_required": true,
+      "query_parameters": [],
+      "request_body": {
+        "content_type": "application/json",
+        "required_fields": [
+          "user_name",
+          "email",
+          "address",
+          "cart_items",
+          "shipping_method",
+          "payment_method"
+        ],
+        "schema": {
+          "user_name": "string",
+          "email": "string (valid email format)",
+          "address": "string",
+          "cart_items": "array of objects",
+          "shipping_method": "string (enum: standard, express)",
+          "payment_method": "string (enum: credit-card, paypal)",
+          "discount_code": "string (optional)",
+          "subtotal": "number",
+          "discount_amount": "number",
+          "shipping_cost": "number",
+          "total": "number"
+        },
+        "example": {
+          "user_name": "John Doe",
+          "email": "john.doe@example.com",
+          "address": "123 Main Street, Apt 4B, New York, NY 10001",
+          "cart_items": [
+            {
+              "product_id": "prod-001",
+              "name": "Wireless Headphones",
+              "price": 79.99,
+              "quantity": 2
+            },
+            {
+              "product_id": "prod-002",
+              "name": "Smart Watch",
+              "price": 199.99,
+              "quantity": 1
+            }
+          ],
+          "shipping_method": "express",
+          "payment_method": "credit-card",
+          "discount_code": "SAVE15",
+          "subtotal": 359.97,
+          "discount_amount": 54.00,
+          "shipping_cost": 10.00,
+          "total": 315.97
+        }
+      },
+      "response": {
+        "success_response": {
+          "status_code": 201,
+          "schema": {
+            "order_id": "string",
+            "status": "string",
+            "message": "string",
+            "order_total": "number",
+            "estimated_delivery": "string",
+            "confirmation_email_sent": "boolean"
+          },
+          "example": {
+            "order_id": "ORD-2024-11-12345",
+            "status": "confirmed",
+            "message": "Payment Successful! Your order has been confirmed.",
+            "order_total": 315.97,
+            "estimated_delivery": "2024-11-22",
+            "confirmation_email_sent": true
+          }
+        },
+        "error_response": {
+          "status_code": 400,
+          "schema": {
+            "error": "string",
+            "message": "string",
+            "validation_errors": "array of objects"
+          },
+          "example": {
+            "error": "ValidationError",
+            "message": "Invalid request data",
+            "validation_errors": [
+              {
+                "field": "email",
+                "message": "Please enter a valid email address"
+              },
+              {
+                "field": "cart_items",
+                "message": "Cart cannot be empty"
+              }
+            ]
+          }
+        }
+      },
+      "validation_rules": {
+        "user_name": {
+          "required": true,
+          "min_length": 1,
+          "error_message": "Please enter your full name"
+        },
+        "email": {
+          "required": true,
+          "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+          "error_message": "Please enter a valid email address"
+        },
+        "address": {
+          "required": true,
+          "min_length": 1,
+          "error_message": "Please enter your shipping address"
+        },
+        "cart_items": {
+          "required": true,
+          "min_items": 1,
+          "error_message": "Cart cannot be empty"
+        },
+        "shipping_method": {
+          "required": true,
+          "allowed_values": ["standard", "express"],
+          "error_message": "Invalid shipping method"
+        },
+        "payment_method": {
+          "required": true,
+          "allowed_values": ["credit-card", "paypal"],
+          "error_message": "Invalid payment method"
+        }
+      }
+    },
+    {
+      "name": "Validate User Details",
+      "method": "POST",
+      "path": "/validate_user_details",
+      "description": "Pre-validate user details before order submission",
+      "authentication_required": false,
+      "query_parameters": [],
+      "request_body": {
+        "content_type": "application/json",
+        "required_fields": ["name", "email", "address"],
+        "schema": {
+          "name": "string",
+          "email": "string",
+          "address": "string"
+        },
+        "example": {
+          "name": "John Doe",
+          "email": "john.doe@example.com",
+          "address": "123 Main St"
+        }
+      },
+      "response": {
+        "success_response": {
+          "status_code": 200,
+          "schema": {
+            "valid": "boolean",
+            "errors": "array (empty if valid)"
+          },
+          "example": {
+            "valid": true,
+            "errors": []
+          }
+        },
+        "error_response": {
+          "status_code": 200,
+          "schema": {
+            "valid": "boolean",
+            "errors": "array of objects"
+          },
+          "example": {
+            "valid": false,
+            "errors": [
+              {
+                "field": "email",
+                "message": "Please enter a valid email address"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "Get Order Status",
+      "method": "GET",
+      "path": "/orders/{order_id}",
+      "description": "Retrieve order details and status",
+      "authentication_required": true,
+      "path_parameters": {
+        "order_id": "string (order identifier)"
+      },
+      "query_parameters": [],
+      "request_body": null,
+      "response": {
+        "success_response": {
+          "status_code": 200,
+          "schema": {
+            "order_id": "string",
+            "status": "string",
+            "created_at": "string (ISO datetime)",
+            "total": "number",
+            "user_details": "object",
+            "items": "array",
+            "shipping_method": "string",
+            "payment_method": "string"
+          },
+          "example": {
+            "order_id": "ORD-2024-11-12345",
+            "status": "confirmed",
+            "created_at": "2024-11-19T10:30:00Z",
+            "total": 315.97,
+            "user_details": {
+              "name": "John Doe",
+              "email": "john.doe@example.com",
+              "address": "123 Main Street, Apt 4B"
+            },
+            "items": [
+              {
+                "product_id": "prod-001",
+                "name": "Wireless Headphones",
+                "quantity": 2,
+                "price": 79.99
+              }
+            ],
+            "shipping_method": "express",
+            "payment_method": "credit-card"
+          }
+        },
+        "error_response": {
+          "status_code": 404,
+          "schema": {
+            "error": "string",
+            "message": "string"
+          },
+          "example": {
+            "error": "NotFound",
+            "message": "Order not found"
+          }
+        }
+      }
+    }
+  ],
+  "error_codes": {
+    "400": "Bad Request - Invalid request data or validation failure",
+    "401": "Unauthorized - Authentication required or invalid token",
+    "404": "Not Found - Resource does not exist",
+    "422": "Unprocessable Entity - Valid syntax but semantic errors",
+    "500": "Internal Server Error - Server-side error occurred"
+  },
+  "rate_limiting": {
+    "requests_per_minute": 60,
+    "burst_allowance": 10,
+    "rate_limit_headers": [
+      "X-RateLimit-Limit",
+      "X-RateLimit-Remaining",
+      "X-RateLimit-Reset"
+    ]
+  },
+  "testing_notes": {
+    "description": "This API specification serves as a contract for frontend-backend integration testing",
+    "mock_data": {
+      "valid_discount_codes": ["SAVE15"],
+      "test_products": [
+        "prod-001",
+        "prod-002",
+        "prod-003"
+      ],
+      "test_email_format": "user@example.com"
+    },
+    "validation_scenarios": [
+      "Empty cart submission should fail",
+      "Invalid email format should fail",
+      "Missing required fields should fail",
+      "Valid discount code SAVE15 should apply 15% discount",
+      "Invalid discount code should return error",
+      "Standard shipping should be free",
+      "Express shipping should cost $10.00"
+    ]
+  }
+}

@@ -1,0 +1,312 @@
+E-SHOP CHECKOUT - UI/UX DESIGN GUIDELINES
+Version 1.0 | November 2024
+==========================================
+
+TABLE OF CONTENTS
+1. Design Philosophy
+2. Color Palette
+3. Typography
+4. Form Validation Display
+5. Button Specifications
+6. Interactive Elements
+7. Error Handling
+8. Success States
+9. Accessibility Guidelines
+10. Responsive Behavior
+
+==========================================
+
+1. DESIGN PHILOSOPHY
+-------------------
+The E-Shop Checkout interface follows modern, clean design principles:
+- Minimalist approach with focus on usability
+- Clear visual hierarchy
+- Immediate user feedback for all actions
+- Progressive disclosure of information
+- Mobile-first responsive design
+
+
+2. COLOR PALETTE
+----------------
+PRIMARY COLORS:
+- Brand Purple: #667eea (primary actions, headers)
+- Dark Purple: #764ba2 (gradients, accents)
+- Success Green: #28a745 (confirmations, pay button)
+
+SEMANTIC COLORS:
+- Error Red: #dc3545 (validation errors, remove buttons)
+- Warning Yellow: #ffc107 (discount button, alerts)
+- Info Blue: #667eea (informational elements)
+
+NEUTRAL COLORS:
+- White: #ffffff (backgrounds, cards)
+- Light Gray: #f8f9fa (section backgrounds)
+- Medium Gray: #dee2e6 (borders, dividers)
+- Dark Gray: #495057 (text, labels)
+- Muted Gray: #6c757d (secondary text)
+
+
+3. TYPOGRAPHY
+-------------
+FONT FAMILY: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+
+FONT SIZES:
+- Page Header (h1): 2.5em (40px)
+- Section Headers (h2): 1.5em (24px)
+- Product Titles (h3): Default size
+- Body Text: 1em (16px)
+- Button Text: 1.1em - 1.3em depending on importance
+- Small Text: 0.9em (14px) for descriptions
+
+FONT WEIGHTS:
+- Regular: 400 (body text)
+- Semi-bold: 600 (labels, emphasis)
+- Bold: 700 (prices, totals, buttons)
+
+
+4. FORM VALIDATION DISPLAY
+---------------------------
+VALIDATION STATES:
+
+Default State:
+- Border: 2px solid #dee2e6 (medium gray)
+- Background: white
+- No error message visible
+
+Focus State:
+- Border: 2px solid #667eea (brand purple)
+- Background: white
+- Outline: none
+
+Error State:
+- Border: 2px solid #dc3545 (error red)
+- Background: white
+- Error message displayed below field
+- Error message color: #dc3545 (error red)
+- Error message font-size: 0.9em (14px)
+
+CRITICAL RULE: Form validation errors MUST be displayed in RED TEXT below the invalid field.
+
+VALIDATION TIMING:
+- Validation triggers when user clicks "Pay Now" button
+- Do NOT validate on field blur (only on form submission)
+- Error messages appear immediately upon validation failure
+- Error messages disappear when field becomes valid
+
+
+5. BUTTON SPECIFICATIONS
+-------------------------
+
+PRIMARY ACTION BUTTON (Pay Now):
+- Background: #28a745 (success green) - MANDATORY COLOR
+- Color: white text
+- Border: none
+- Padding: 18px
+- Border-radius: 8px
+- Font-size: 1.3em (20.8px)
+- Font-weight: bold
+- Width: 100% (full width)
+- Cursor: pointer
+
+CRITICAL RULE: The "Pay Now" button MUST be green (#28a745).
+
+Hover State (Pay Now):
+- Background: #218838 (darker green)
+- Subtle transform/shadow effect allowed
+
+Disabled State (Pay Now):
+- Background: #6c757d (muted gray)
+- Cursor: not-allowed
+
+ADD TO CART BUTTONS:
+- Background: #667eea (brand purple)
+- Color: white text
+- Border: none
+- Padding: 10px 20px
+- Border-radius: 5px
+- Font-weight: bold
+- Cursor: pointer
+
+Hover State (Add to Cart):
+- Background: #5568d3 (darker purple)
+
+APPLY DISCOUNT BUTTON:
+- Background: #ffc107 (warning yellow)
+- Color: #212529 (dark text for contrast)
+- Border: none
+- Padding: 10px 20px
+- Border-radius: 5px
+- Font-weight: bold
+- Cursor: pointer
+
+REMOVE BUTTON:
+- Background: #dc3545 (error red)
+- Color: white text
+- Border: none
+- Padding: 5px 15px
+- Border-radius: 5px
+- Font-size: 0.9em (14px)
+- Cursor: pointer
+
+
+6. INTERACTIVE ELEMENTS
+------------------------
+
+PRODUCT CARDS:
+- Background: white
+- Border-radius: 8px
+- Box-shadow: 0 2px 10px rgba(0,0,0,0.1)
+- Hover effect: translateY(-3px) with increased shadow
+- Transition: transform 0.2s
+
+CART ITEMS:
+- Background: white
+- Border-radius: 8px
+- Padding: 15px
+- Display items with clear separation
+
+RADIO BUTTON OPTIONS (Shipping/Payment):
+- Container background: white
+- Border: 2px solid #dee2e6 (default)
+- Border-radius: 8px
+- Padding: 15px
+- Cursor: pointer
+
+Selected Radio Option:
+- Border: 2px solid #667eea (brand purple)
+- Background: #f8f9ff (very light purple tint)
+
+Hover State (Radio Options):
+- Border: #667eea (brand purple)
+- Background: #f8f9ff (light purple tint)
+
+QUANTITY INPUT:
+- Width: 60px
+- Padding: 5px
+- Text-align: center
+- Border: 2px solid #dee2e6
+- Border-radius: 5px
+
+
+7. ERROR HANDLING
+-----------------
+
+DISCOUNT CODE ERRORS:
+- Display below discount input field
+- Background: #f8d7da (light red)
+- Color: #721c24 (dark red text)
+- Border: 1px solid #f5c6cb (red border)
+- Border-radius: 5px
+- Padding: 10px
+- Display: block (visible only when error occurs)
+
+Error Messages:
+- Empty code: "✗ Please enter a discount code"
+- Invalid code: "✗ Invalid discount code"
+
+FORM FIELD ERRORS:
+- Name field: "Please enter your full name"
+- Email field: "Please enter a valid email address"
+- Address field: "Please enter your shipping address"
+
+EMPTY CART ERROR:
+- Alert modal: "Your cart is empty. Please add items before checkout."
+- Prevents form submission
+
+
+8. SUCCESS STATES
+-----------------
+
+DISCOUNT CODE SUCCESS:
+- Background: #d4edda (light green)
+- Color: #155724 (dark green text)
+- Border: 1px solid #c3e6cb (green border)
+- Border-radius: 5px
+- Padding: 10px
+- Message: "✓ Discount code applied! You saved 15%"
+
+PAYMENT SUCCESS MODAL:
+- Overlay: rgba(0,0,0,0.7) (dark semi-transparent)
+- Modal background: white
+- Border-radius: 15px
+- Padding: 40px
+- Center-aligned content
+
+Success Icon:
+- Character: ✓ (checkmark)
+- Font-size: 4em (64px)
+- Color: #28a745 (success green)
+
+Success Heading:
+- Text: "Payment Successful!"
+- Color: #28a745 (success green)
+- Margin-bottom: 15px
+
+Close Button (Modal):
+- Background: #667eea (brand purple)
+- Color: white text
+- Border: none
+- Padding: 12px 30px
+- Border-radius: 5px
+- Font-size: 1.1em (17.6px)
+- Cursor: pointer
+
+
+9. ACCESSIBILITY GUIDELINES
+----------------------------
+
+CONTRAST REQUIREMENTS:
+- All text must meet WCAG AA standards (4.5:1 ratio minimum)
+- Error messages use high contrast red (#dc3545 on white)
+- Success messages use high contrast green (#155724 on light green background)
+
+KEYBOARD NAVIGATION:
+- All interactive elements must be keyboard accessible
+- Tab order follows logical flow
+- Focus states clearly visible (purple border)
+
+LABELS AND DESCRIPTIONS:
+- All form fields have visible labels
+- Radio buttons have descriptive text
+- Required fields marked with asterisk (*)
+
+SCREEN READER SUPPORT:
+- Use semantic HTML elements
+- Provide alt text for icons (if using images)
+- Error messages associated with form fields
+
+
+10. RESPONSIVE BEHAVIOR
+-----------------------
+
+BREAKPOINTS:
+- Mobile: < 768px
+- Desktop: >= 768px
+
+MOBILE ADAPTATIONS:
+- Two-column layout becomes single column
+- Maintain readability and touch targets
+- Buttons remain full-width for easy tapping
+
+GRID LAYOUT:
+- Desktop: 2-column grid (products/cart left, form/payment right)
+- Mobile: Single column, stacked sections
+- Breakpoint: 968px (changes to single column below this)
+
+
+==========================================
+
+IMPLEMENTATION NOTES:
+--------------------
+1. All color values must be used exactly as specified
+2. The "Pay Now" button green color is a CRITICAL requirement
+3. Validation error display in red text is MANDATORY
+4. Maintain consistent spacing and border-radius values
+5. Use transitions for smooth hover effects (0.3s duration)
+6. Ensure box-shadows are subtle and consistent
+7. Test all interactive states thoroughly
+
+==========================================
+
+REVISION HISTORY:
+- v1.0 (November 2024): Initial release
