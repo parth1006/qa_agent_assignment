@@ -14,7 +14,7 @@ from typing import List, Optional
 
 # ===== CONFIGURATION =====
 
-BACKEND_URL = "http://localhost:8000"
+BACKEND_URL = "https://parth4384-qa-agent-api.hf.space"
 
 st.set_page_config(
     page_title="QA Agent - Test Case Generator",
