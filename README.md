@@ -101,9 +101,6 @@ qa-agent-assignment/
 - **Groq** - LLM inference (Llama 3.3 70B)
 - **LangChain** - Text processing
 
-## 📄 License
-
-MIT License - see [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
