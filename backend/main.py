@@ -4,8 +4,6 @@ Main FastAPI Application - QA Agent Backend
 This is the main entry point for the FastAPI backend server.
 It includes all routes, middleware, and configuration.
 
-Author: QA Agent Team
-Date: November 2024
 """
 
 from fastapi import FastAPI, Request, status
@@ -17,6 +15,7 @@ import sys
 
 from backend.config import settings, print_config_summary
 from backend.routes import ingestion_router, agent_router
+from backend.routes.test_data_routes import router as test_data_router
 
 
 # ===== LOGGING CONFIGURATION =====
@@ -167,7 +166,8 @@ async def root():
         "health": "/health",
         "endpoints": {
             "ingestion": "/ingestion/*",
-            "agent": "/agent/*"
+            "agent": "/agent/*",
+            "test_data": "/test-data/*"
         }
     }
 
@@ -243,6 +243,7 @@ async def get_config():
 
 app.include_router(ingestion_router)
 app.include_router(agent_router)
+app.include_router(test_data_router)
 
 
 # ===== RUN SERVER =====

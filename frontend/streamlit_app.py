@@ -3,7 +3,6 @@ Streamlit Frontend - QA Agent Assignment
 
 Simplified, minimal UI for end users.
 
-
 """
 
 import streamlit as st
@@ -11,10 +10,12 @@ import requests
 from pathlib import Path
 import json
 from typing import List, Optional
+import os
 
 # ===== CONFIGURATION =====
 
-BACKEND_URL = "http://localhost:8000"
+# Backend URL - from environment variable or default to localhost
+BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
 
 st.set_page_config(
     page_title="QA Agent - Test Case Generator",
@@ -361,6 +362,157 @@ def show_main_page():
                     else:
                         st.markdown(
                             f'<div class="error-box">❌ {result.get("error", "Generation failed")}</div>',
+                            unsafe_allow_html=True
+                        )
+    
+    st.markdown("---")
+    
+    # ===== SECTION 2.5: TEST DATA GENERATION =====
+    st.markdown('<div class="section-header">📊 Step 2.5: Generate Test Data</div>', unsafe_allow_html=True)
+    st.markdown("Generate realistic test data for your test cases")
+    
+    with st.expander("🔽 Generate Test Data", expanded=False):
+        st.markdown("**Generate test data from test cases or manual input**")
+        
+        # Input method selection
+        input_method = st.radio(
+            "Input Method",
+            ["From Generated Test Cases", "Manual Description"],
+            horizontal=True
+        )
+        
+        if input_method == "From Generated Test Cases":
+            test_data_input = st.session_state.get("last_test_cases", "")
+            if not test_data_input:
+                st.info("ℹ️ Generate test cases first in Step 2, or use Manual Description")
+            else:
+                st.text_area(
+                    "Test Cases (from Step 2)",
+                    value=test_data_input[:500] + "..." if len(test_data_input) > 500 else test_data_input,
+                    height=100,
+                    disabled=True
+                )
+        else:
+            test_data_input = st.text_area(
+                "Test Case Description",
+                placeholder="Example: Test user registration with email, password, age (18+), and discount code",
+                height=100
+            )
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            num_valid = st.number_input("Valid Records", min_value=1, max_value=20, value=5)
+        with col2:
+            num_invalid = st.number_input("Invalid Records", min_value=0, max_value=20, value=3)
+        
+        if st.button("📊 Generate Test Data", key="gen_test_data_btn"):
+            if not test_data_input or len(test_data_input) < 10:
+                st.error("⚠️ Please provide test case information (minimum 10 characters)")
+            else:
+                with st.spinner("🔄 Generating test data... (10-15 seconds)"):
+                    try:
+                        response = requests.post(
+                            f"{BACKEND_URL}/test-data/generate",
+                            json={
+                                "test_case": test_data_input,
+                                "num_valid": num_valid,
+                                "num_invalid": num_invalid
+                            },
+                            timeout=30
+                        )
+                        
+                        if response.status_code == 200:
+                            result = response.json()
+                            
+                            st.markdown(
+                                '<div class="success-box">✅ Test data generated!</div>',
+                                unsafe_allow_html=True
+                            )
+                            
+                            # Display summary
+                            summary = result.get("summary", {})
+                            st.markdown(f"""
+                            **Summary:**
+                            - ✅ Valid records: {summary.get('total_valid', 0)}
+                            - ❌ Invalid records: {summary.get('total_invalid', 0)}
+                            - 🎯 Boundary cases: {summary.get('total_boundary', 0)}
+                            - 📝 Fields detected: {summary.get('total_fields', 0)}
+                            """)
+                            
+                            # Tabs for different data types
+                            tab1, tab2, tab3, tab4 = st.tabs([
+                                "✅ Valid Data",
+                                "❌ Invalid Data",
+                                "🎯 Boundary Data",
+                                "📋 Field Definitions"
+                            ])
+                            
+                            with tab1:
+                                valid_data = result.get("valid_data", [])
+                                if valid_data:
+                                    st.json(valid_data)
+                                    st.download_button(
+                                        label="💾 Download Valid Data (JSON)",
+                                        data=json.dumps(valid_data, indent=2),
+                                        file_name="valid_test_data.json",
+                                        mime="application/json"
+                                    )
+                                else:
+                                    st.info("No valid data generated")
+                            
+                            with tab2:
+                                invalid_data = result.get("invalid_data", [])
+                                if invalid_data:
+                                    st.json(invalid_data)
+                                    st.download_button(
+                                        label="💾 Download Invalid Data (JSON)",
+                                        data=json.dumps(invalid_data, indent=2),
+                                        file_name="invalid_test_data.json",
+                                        mime="application/json"
+                                    )
+                                else:
+                                    st.info("No invalid data generated")
+                            
+                            with tab3:
+                                boundary_data = result.get("boundary_data", [])
+                                if boundary_data:
+                                    st.json(boundary_data)
+                                    st.download_button(
+                                        label="💾 Download Boundary Data (JSON)",
+                                        data=json.dumps(boundary_data, indent=2),
+                                        file_name="boundary_test_data.json",
+                                        mime="application/json"
+                                    )
+                                else:
+                                    st.info("No boundary data generated")
+                            
+                            with tab4:
+                                fields = result.get("fields", [])
+                                if fields:
+                                    for field in fields:
+                                        st.markdown(f"""
+                                        **{field.get('field_name')}**
+                                        - Type: `{field.get('data_type')}`
+                                        - Required: {'Yes' if field.get('required') else 'No'}
+                                        - Constraints: {field.get('constraints', {})}
+                                        """)
+                                else:
+                                    st.info("No fields detected")
+                        
+                        else:
+                            st.markdown(
+                                f'<div class="error-box">❌ Error: {response.text}</div>',
+                                unsafe_allow_html=True
+                            )
+                    
+                    except requests.exceptions.Timeout:
+                        st.markdown(
+                            '<div class="error-box">❌ Request timed out. Please try again.</div>',
+                            unsafe_allow_html=True
+                        )
+                    except Exception as e:
+                        st.markdown(
+                            f'<div class="error-box">❌ Error: {str(e)}</div>',
                             unsafe_allow_html=True
                         )
     
