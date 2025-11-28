@@ -23,12 +23,28 @@ class TestDataService:
     def extract_fields_from_test_case(self, test_case: str) -> List[Dict[str, Any]]:
         """Extract data fields from test case description using LLM"""
         
-        system_prompt = """You are an expert at analyzing test cases and identifying data fields.
+        system_prompt = """You are an expert at analyzing test cases and identifying INPUT DATA FIELDS that need test data.
 
-Analyze the test case and extract all data fields that would need test data.
+IMPORTANT: Only extract fields that represent USER INPUT or TEST DATA, NOT test case metadata.
 
-For each field, determine:
-1. Field name
+DO NOT extract these fields (they are test case structure, not data):
+- test_id
+- feature
+- test_scenario
+- test_type
+- preconditions
+- test_steps
+- expected_result
+- source_document
+
+DO extract these types of fields (actual test data):
+- User credentials: email, username, password
+- User information: name, age, phone, address
+- Transaction data: price, discount_code, payment_method
+- Form inputs: any field a user would enter
+
+For each DATA field found, determine:
+1. Field name (the actual input field name)
 2. Data type (email, phone, name, username, password, age, date, price, discount_code, url, address, zipcode, credit_card, text, number)
 3. Whether it's required
 4. Any constraints (min/max values, format, etc.)
@@ -42,20 +58,21 @@ Return ONLY a valid JSON array in this exact format:
     "constraints": {}
   },
   {
-    "field_name": "age",
-    "data_type": "age",
+    "field_name": "discount_code",
+    "data_type": "discount_code",
     "required": true,
-    "constraints": {"min": 18, "max": 100}
+    "constraints": {}
   }
 ]
 
-If no fields are found, return an empty array: []
+If no DATA fields are found, return an empty array: []
 """
         
         user_prompt = f"""Test Case:
 {test_case}
 
-Extract all data fields from this test case."""
+Extract ONLY the input data fields (like email, username, discount_code) that would need test data.
+DO NOT extract test case metadata fields (like test_id, feature, test_scenario, etc.)."""
         
         try:
             response = self.llm_client.generate_response(
@@ -83,26 +100,48 @@ Extract all data fields from this test case."""
         fields = []
         test_case_lower = test_case.lower()
         
-        # Common field patterns
+        # IMPORTANT: Skip test case structure keywords
+        skip_keywords = [
+            'test_id', 'feature', 'test_scenario', 'test_type',
+            'preconditions', 'test_steps', 'expected_result', 'source_document'
+        ]
+        
+        # Common field patterns for ACTUAL DATA FIELDS
         field_patterns = {
             "email": r'\b(email|e-mail|mail)\b',
             "phone": r'\b(phone|mobile|telephone|tel)\b',
-            "name": r'\b(name|username|user name)\b',
+            "username": r'\b(username|user[\s_]name)\b',
+            "name": r'\b(?<!user)(name)(?![\s_])|full[\s_]name\b',
             "password": r'\b(password|pwd|pass)\b',
             "age": r'\b(age)\b',
-            "discount": r'\b(discount|promo|coupon|code)\b',
-            "price": r'\b(price|cost|amount)\b',
-            "date": r'\b(date|dob|birth date)\b',
+            "discount_code": r'\b(discount|promo|coupon|code)\b',
+            "price": r'\b(price|cost|amount|total)\b',
+            "date": r'\b(date|dob|birth[\s_]date)\b',
         }
         
         for field_name, pattern in field_patterns.items():
+            # Skip if it's a test case structure field
+            if field_name in skip_keywords:
+                continue
+                
             if re.search(pattern, test_case_lower):
-                fields.append({
-                    "field_name": field_name,
-                    "data_type": self.generator.detect_field_type(field_name).value,
-                    "required": True,
-                    "constraints": {}
-                })
+                # Make sure we're not matching test case structure
+                context = re.findall(r'\b\w+\s+' + pattern.split('\\b')[1] + r'\s+\w+\b', test_case_lower)
+                
+                # Skip if found in context of test case structure
+                skip = False
+                for ctx in context:
+                    if any(skip_word in ctx for skip_word in skip_keywords):
+                        skip = True
+                        break
+                
+                if not skip:
+                    fields.append({
+                        "field_name": field_name,
+                        "data_type": self.generator.detect_field_type(field_name).value,
+                        "required": True,
+                        "constraints": {}
+                    })
         
         logger.warning(f"⚠️  Using fallback extraction, found {len(fields)} fields")
         return fields
@@ -122,8 +161,27 @@ Extract all data fields from this test case."""
         if fields is None:
             fields = self.extract_fields_from_test_case(test_case)
         
+        # CRITICAL: Filter out test case structure fields
+        test_case_structure_fields = {
+            'test_id', 'feature', 'test_scenario', 'test_type',
+            'preconditions', 'test_steps', 'expected_result', 'source_document',
+            'test_case', 'scenario', 'steps', 'result'
+        }
+        
+        # Filter fields
+        filtered_fields = []
+        for field in fields:
+            field_name = field['field_name'].lower()
+            # Skip if it's a test case structure field
+            if field_name not in test_case_structure_fields:
+                filtered_fields.append(field)
+            else:
+                logger.warning(f"⚠️  Skipping test case structure field: {field_name}")
+        
+        fields = filtered_fields
+        
         if not fields:
-            logger.warning("⚠️  No fields extracted, returning empty dataset")
+            logger.warning("⚠️  No valid data fields extracted, returning empty dataset")
             return {
                 "valid_data": [],
                 "invalid_data": [],
