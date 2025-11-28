@@ -26,7 +26,7 @@ An intelligent QA automation system that generates comprehensive test cases and 
 
 ```bash
 # Clone repository
-git clone https://github.com/your-username/qa-agent-assignment.git
+git clone https://github.com/parth1006/qa_agent_assignment.git
 cd qa-agent-assignment
 
 # Create virtual environment
@@ -89,8 +89,8 @@ qa-agent-assignment/
 
 ## 🌐 Live Demo
 
-- **Frontend**: [Streamlit Cloud]() *(Add your URL)*
-- **Backend API**: [Hugging Face Spaces]() *(Add your URL)*
+- **Frontend**: [Streamlit Cloud](https://agent-based-test-generator.streamlit.app/)
+- **Backend API**: [Hugging Face Spaces](https://huggingface.co/spaces/parth4384/qa-agent-api/tree/main)
 
 ## 🛠️ Technologies
 
@@ -101,9 +101,6 @@ qa-agent-assignment/
 - **Groq** - LLM inference (Llama 3.3 70B)
 - **LangChain** - Text processing
 
-## 📄 License
-
-MIT License - see [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
