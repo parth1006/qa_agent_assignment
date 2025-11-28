@@ -365,10 +365,8 @@ def show_main_page():
                             unsafe_allow_html=True
                         )
     
-    st.markdown("---")
-    
     # ===== SECTION 2.5: TEST DATA GENERATION =====
-    st.markdown('<div class="section-header">📊 Step 2.5: Generate Test Data</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">📊Generate Test Data</div>', unsafe_allow_html=True)
     st.markdown("Generate realistic test data for your test cases")
     
     with st.expander("🔽 Generate Test Data", expanded=False):
