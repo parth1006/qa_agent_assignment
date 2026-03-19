@@ -1,0 +1,21 @@
+# Render Blueprint Configuration
+# Deploys FastAPI backend on Render free tier
+ 
+services:
+  # Backend API Service
+  - type: web
+    name: qa-agent-backend
+    env: python
+    region: singapore  # Change to your preferred region: oregon, frankfurt, singapore
+    plan: free
+    branch: main
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      - key: GROQ_API_KEY
+        sync: false  # You'll add this manually in Render dashboard
+    healthCheckPath: /health
+    autoDeploy: true
+ 
