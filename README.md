@@ -90,7 +90,7 @@ qa-agent-assignment/
 ## 🌐 Live Demo
 
 - **Frontend**: [Streamlit Cloud](https://agent-based-test-generator.streamlit.app/)
-- **Backend API**: [Hugging Face Spaces](https://huggingface.co/spaces/parth4384/qa-agent-api/tree/main)
+- **Backend API**: [Render]
 
 ## 🛠️ Technologies
 
